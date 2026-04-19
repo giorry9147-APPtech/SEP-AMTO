@@ -2,7 +2,6 @@ import Link from "next/link";
 import { AppShell } from "@/components/dashboard/app-shell";
 import { CreateUserForm } from "@/components/admin/create-user-form";
 import { createManagedUserAction } from "@/lib/actions/admin";
-import { isSupabaseConfigured } from "@/lib/env";
 import { requireRole } from "@/lib/auth/require-role";
 
 const navLinks = [
@@ -25,7 +24,6 @@ export default async function AdminNewTeacherPage() {
       navTitle="Beheer"
       navSubtitle="Gebruikers"
       links={navLinks}
-      demoMode={!isSupabaseConfigured()}
     >
       <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
         <section className="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-panel">

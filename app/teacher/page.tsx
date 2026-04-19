@@ -3,7 +3,6 @@ import { AppShell } from "@/components/dashboard/app-shell";
 import { StatCard } from "@/components/dashboard/stat-card";
 import { AssignmentList } from "@/components/student/assignment-list";
 import { EmptyState } from "@/components/ui/empty-state";
-import { isSupabaseConfigured } from "@/lib/env";
 import { requireRole } from "@/lib/auth/require-role";
 import { getTeacherOverview } from "@/lib/queries/teacher";
 
@@ -27,7 +26,6 @@ export default async function TeacherPage() {
       navTitle="Docent"
       navSubtitle="Mijn vakken"
       links={navLinks}
-      demoMode={!isSupabaseConfigured()}
     >
       <section className="grid gap-4 md:grid-cols-3">
         {overview.stats.map((stat) => (

@@ -1,19 +1,9 @@
 import { cookies } from "next/headers";
-import { demoAdminOverview } from "@/lib/demo-data";
-import { isSupabaseConfigured } from "@/lib/env";
 import type { StudentSelection } from "@/lib/student-access";
 import type { StudentProgramOption } from "@/types/app";
 import { createClient } from "@/lib/supabase/server";
 
 export async function getStudentPrograms(): Promise<StudentProgramOption[]> {
-  if (!isSupabaseConfigured()) {
-    return demoAdminOverview.programs.map((program) => ({
-      id: program.id,
-      name: program.name,
-      code: program.code
-    }));
-  }
-
   const supabase = await createClient();
 
   if (!supabase) {

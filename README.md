@@ -1,6 +1,6 @@
-# AMTO Lesportaal Starterset
+# AMTO Lesportaal
 
-Demo-ready starterset voor een lesportaal voor AMTO, gebouwd met Next.js App Router, TypeScript, Supabase en Tailwind.
+Lesportaal voor AMTO, gebouwd met Next.js App Router, TypeScript, Supabase en Tailwind.
 
 ## Stack
 
@@ -45,7 +45,14 @@ middleware.ts
 npm install
 ```
 
-2. Maak een `.env.local` op basis van `.env.example`.
+2. Maak een `.env.local` met minimaal:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
 
 3. Maak in Supabase een project aan en voer deze SQL-bestanden in volgorde uit:
 
@@ -62,16 +69,24 @@ supabase/seed.sql
 
 5. Maak in Supabase Auth minimaal deze gebruikers aan:
 
-- `admin@amto.demo`
-- `docent@amto.demo`
-- `student@amto.demo`
+- een adminaccount
+- een docentaccount
+- een studentaccount
 
 6. Pas daarna de rollen in `profiles` aan:
 
 ```sql
-update public.profiles set school_id = '11111111-1111-1111-1111-111111111111', role = 'admin' where email = 'admin@amto.demo';
-update public.profiles set school_id = '11111111-1111-1111-1111-111111111111', role = 'teacher' where email = 'docent@amto.demo';
-update public.profiles set school_id = '11111111-1111-1111-1111-111111111111', role = 'student' where email = 'student@amto.demo';
+update public.profiles
+set school_id = '11111111-1111-1111-1111-111111111111', role = 'admin'
+where email = 'jouw-admin-email';
+
+update public.profiles
+set school_id = '11111111-1111-1111-1111-111111111111', role = 'teacher'
+where email = 'jouw-docent-email';
+
+update public.profiles
+set school_id = '11111111-1111-1111-1111-111111111111', role = 'student'
+where email = 'jouw-student-email';
 ```
 
 7. Start lokaal:
@@ -79,10 +94,6 @@ update public.profiles set school_id = '11111111-1111-1111-1111-111111111111', r
 ```bash
 npm run dev
 ```
-
-## Demo modus
-
-Als Supabase-variabelen ontbreken, draait de app in demo modus. Je kunt dan lokaal door de UI klikken zonder echte backend.
 
 ## Belangrijkste routes
 

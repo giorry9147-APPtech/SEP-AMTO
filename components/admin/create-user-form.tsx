@@ -26,7 +26,7 @@ export function CreateUserForm({ role, action }: CreateUserFormProps) {
           type="email"
           required
           className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm"
-          placeholder={role === "teacher" ? "docent@amto.demo" : "student@amto.demo"}
+          placeholder={role === "teacher" ? "docent@school.local" : "student@school.local"}
         />
       </div>
       <div>

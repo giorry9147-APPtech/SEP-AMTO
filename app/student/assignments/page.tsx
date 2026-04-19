@@ -1,7 +1,6 @@
 import { AppShell } from "@/components/dashboard/app-shell";
 import { AssignmentList } from "@/components/student/assignment-list";
 import { EmptyState } from "@/components/ui/empty-state";
-import { isSupabaseConfigured } from "@/lib/env";
 import { requireRole } from "@/lib/auth/require-role";
 import { getStudentOverview } from "@/lib/queries/student";
 import {
@@ -42,7 +41,6 @@ export default async function StudentAssignmentsPage() {
         navTitle="Student"
         navSubtitle="Opdrachten"
         links={navLinks}
-        demoMode={!isSupabaseConfigured()}
       >
         <EmptyState
           title="Nog geen richting gekozen"
@@ -63,7 +61,6 @@ export default async function StudentAssignmentsPage() {
       navTitle="Student"
       navSubtitle="Opdrachten"
       links={navLinks}
-      demoMode={!isSupabaseConfigured()}
     >
       <AssignmentList assignments={overview.assignments} />
     </AppShell>

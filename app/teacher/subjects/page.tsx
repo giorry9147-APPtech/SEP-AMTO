@@ -2,7 +2,6 @@ import Link from "next/link";
 import { AppShell } from "@/components/dashboard/app-shell";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { isSupabaseConfigured } from "@/lib/env";
 import { requireRole } from "@/lib/auth/require-role";
 import { getTeacherOverview } from "@/lib/queries/teacher";
 
@@ -26,7 +25,6 @@ export default async function TeacherSubjectsPage() {
       navTitle="Docent"
       navSubtitle="Vakoverzicht"
       links={navLinks}
-      demoMode={!isSupabaseConfigured()}
     >
       <section className="grid gap-4 xl:grid-cols-2">
         {overview.subjects.length ? (

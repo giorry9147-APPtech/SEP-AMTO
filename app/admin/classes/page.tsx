@@ -3,7 +3,6 @@ import { AssignStudentForm } from "@/components/admin/assign-student-form";
 import { CreateClassForm } from "@/components/admin/create-class-form";
 import { EmptyState } from "@/components/ui/empty-state";
 import { createClassAction, assignStudentToClassAction } from "@/lib/actions/admin";
-import { isSupabaseConfigured } from "@/lib/env";
 import { requireRole } from "@/lib/auth/require-role";
 import { getAdminOverview } from "@/lib/queries/admin";
 
@@ -28,7 +27,6 @@ export default async function AdminClassesPage() {
       navTitle="Beheer"
       navSubtitle="Klassen"
       links={navLinks}
-      demoMode={!isSupabaseConfigured()}
     >
       <div className="grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
         <CreateClassForm

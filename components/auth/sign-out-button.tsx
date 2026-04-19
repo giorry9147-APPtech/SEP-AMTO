@@ -2,17 +2,8 @@
 
 import { createClient } from "@/lib/supabase/client";
 
-type SignOutButtonProps = {
-  demoMode?: boolean;
-};
-
-export function SignOutButton({ demoMode }: SignOutButtonProps) {
+export function SignOutButton() {
   async function handleSignOut() {
-    if (demoMode) {
-      window.location.href = "/login";
-      return;
-    }
-
     const supabase = createClient();
 
     if (!supabase) {

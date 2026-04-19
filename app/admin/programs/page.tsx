@@ -2,7 +2,6 @@ import { AppShell } from "@/components/dashboard/app-shell";
 import { CreateProgramForm } from "@/components/admin/create-program-form";
 import { EmptyState } from "@/components/ui/empty-state";
 import { createStudyProgramAction } from "@/lib/actions/admin";
-import { isSupabaseConfigured } from "@/lib/env";
 import { requireRole } from "@/lib/auth/require-role";
 import { getAdminOverview } from "@/lib/queries/admin";
 
@@ -27,7 +26,6 @@ export default async function AdminProgramsPage() {
       navTitle="Beheer"
       navSubtitle="Richtingen"
       links={navLinks}
-      demoMode={!isSupabaseConfigured()}
     >
       <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
         <CreateProgramForm action={createStudyProgramAction} />

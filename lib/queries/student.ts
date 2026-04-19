@@ -1,5 +1,3 @@
-import { demoStudentOverview } from "@/lib/demo-data";
-import { isSupabaseConfigured } from "@/lib/env";
 import { getStorageObjectUrl } from "@/lib/supabase/storage";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
 import type { StudentOverview } from "@/types/app";
@@ -20,8 +18,8 @@ function createEmptyStudentOverview(profile: StudentOverview["profile"] = null):
 }
 
 export async function getStudentOverview(profileId?: string): Promise<StudentOverview> {
-  if (!isSupabaseConfigured() || !profileId) {
-    return demoStudentOverview;
+  if (!profileId) {
+    return createEmptyStudentOverview();
   }
 
   try {

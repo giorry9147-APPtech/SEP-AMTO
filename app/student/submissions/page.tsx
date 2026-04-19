@@ -4,7 +4,6 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { uploadSubmissionAction } from "@/lib/actions/student";
 import { formatDate } from "@/lib/utils";
-import { isSupabaseConfigured } from "@/lib/env";
 import { requireRole } from "@/lib/auth/require-role";
 import { getStudentOverview } from "@/lib/queries/student";
 import {
@@ -45,7 +44,6 @@ export default async function StudentSubmissionsPage() {
         navTitle="Student"
         navSubtitle="Inzendingen"
         links={navLinks}
-        demoMode={!isSupabaseConfigured()}
       >
         <EmptyState
           title="Nog geen richting gekozen"
@@ -66,7 +64,6 @@ export default async function StudentSubmissionsPage() {
       navTitle="Student"
       navSubtitle="Inzendingen"
       links={navLinks}
-      demoMode={!isSupabaseConfigured()}
     >
       <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
         <UploadSubmissionForm

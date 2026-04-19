@@ -8,12 +8,7 @@ export default async function DashboardPage() {
   const supabase = await createClient();
 
   if (!supabase) {
-    return (
-      <main style={{ padding: 24 }}>
-        <h1>Dashboard test OK</h1>
-        <pre>{JSON.stringify({ demoMode: true }, null, 2)}</pre>
-      </main>
-    );
+    redirect("/login?reason=missing-supabase");
   }
 
   const {

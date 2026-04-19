@@ -1,7 +1,6 @@
 import { AppShell } from "@/components/dashboard/app-shell";
 import { CreateAssignmentForm } from "@/components/teacher/create-assignment-form";
 import { createAssignmentAction } from "@/lib/actions/teacher";
-import { isSupabaseConfigured } from "@/lib/env";
 import { requireRole } from "@/lib/auth/require-role";
 import { getTeacherOverview } from "@/lib/queries/teacher";
 
@@ -25,7 +24,6 @@ export default async function NewTeacherAssignmentPage() {
       navTitle="Docent"
       navSubtitle="Opdrachten"
       links={navLinks}
-      demoMode={!isSupabaseConfigured()}
     >
       <CreateAssignmentForm
         classSubjects={overview.subjects.map((item) => ({

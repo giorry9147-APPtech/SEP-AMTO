@@ -12,7 +12,6 @@ type AppShellProps = {
   navTitle: string;
   navSubtitle: string;
   links: ReadonlyArray<{ href: Route; label: string }>;
-  demoMode?: boolean;
   children: ReactNode;
 };
 
@@ -24,7 +23,6 @@ export function AppShell({
   navTitle,
   navSubtitle,
   links,
-  demoMode,
   children
 }: AppShellProps) {
   return (
@@ -32,7 +30,7 @@ export function AppShell({
       <div className="grid min-h-screen w-full lg:grid-cols-[320px_minmax(0,1fr)]">
         <Sidebar title={navTitle} subtitle={navSubtitle} currentPath={currentPath} links={links} />
         <div className="space-y-6 px-4 py-4 md:px-6 md:py-6 lg:px-8 lg:py-8">
-          <Topbar profile={profile} title={title} description={description} demoMode={demoMode} />
+          <Topbar profile={profile} title={title} description={description} />
           {children}
         </div>
       </div>

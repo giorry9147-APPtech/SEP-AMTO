@@ -1,7 +1,6 @@
 import { AppShell } from "@/components/dashboard/app-shell";
 import { CreateLessonForm } from "@/components/teacher/create-lesson-form";
 import { createLessonAction } from "@/lib/actions/teacher";
-import { isSupabaseConfigured } from "@/lib/env";
 import { requireRole } from "@/lib/auth/require-role";
 import { getTeacherOverview } from "@/lib/queries/teacher";
 
@@ -25,7 +24,6 @@ export default async function NewTeacherLessonPage() {
       navTitle="Docent"
       navSubtitle="Lessen"
       links={navLinks}
-      demoMode={!isSupabaseConfigured()}
     >
       <CreateLessonForm
         classSubjects={overview.subjects.map((item) => ({

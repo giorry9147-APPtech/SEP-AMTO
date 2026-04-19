@@ -1,13 +1,7 @@
-import { demoProfiles } from "@/lib/demo-data";
-import { isSupabaseConfigured } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 import type { Profile } from "@/types/database";
 
 export async function getProfile(): Promise<Profile | null> {
-  if (!isSupabaseConfigured()) {
-    return demoProfiles.admin;
-  }
-
   const supabase = await createClient();
 
   if (!supabase) {

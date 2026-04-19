@@ -2,22 +2,31 @@
 
 import { revalidatePath } from "next/cache";
 import type { FormActionState } from "@/lib/actions/form-state";
-import { demoAdminOverview } from "@/lib/demo-data";
-import { isSupabaseConfigured } from "@/lib/env";
+import { getSupabaseConfigError } from "@/lib/env";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
 
+async function getSchoolId(supabase: any) {
+  const { data, error } = await supabase.from("schools").select("id").limit(1).maybeSingle();
+
+  if (error) {
+    throw new Error(`School ophalen mislukt: ${error.message}`);
+  }
+
+  if (!data?.id) {
+    throw new Error("Geen school gevonden. Maak eerst een schoolrecord aan in Supabase.");
+  }
+
+  return data.id as string;
+}
+
 export async function createClassAction(formData: FormData) {
-  if (!isSupabaseConfigured()) {
-    revalidatePath("/admin/classes");
-    return;
-  }
-
   const supabase = createAdminClient() ?? (await createClient());
-  const schoolId = demoAdminOverview.school?.id;
 
-  if (!supabase || !schoolId) {
-    return;
+  if (!supabase) {
+    throw new Error(getSupabaseConfigError() ?? "Verbinding met Supabase ontbreekt.");
   }
+
+  const schoolId = await getSchoolId(supabase);
 
   const { error } = await supabase.from("classes").insert({
     school_id: schoolId,
@@ -40,15 +49,13 @@ export async function assignStudentToClassAction(
   _previousState: FormActionState,
   formData: FormData
 ): Promise<FormActionState> {
-  if (!isSupabaseConfigured()) {
-    revalidatePath("/admin/classes");
-    return { status: "success", message: "Student is gekoppeld in demo-modus." };
-  }
-
   const supabase = createAdminClient() ?? (await createClient());
 
   if (!supabase) {
-    return { status: "error", message: "Verbinding met Supabase ontbreekt." };
+    return {
+      status: "error",
+      message: getSupabaseConfigError() ?? "Verbinding met Supabase ontbreekt."
+    };
   }
 
   const classId = String(formData.get("class_id"));
@@ -114,18 +121,17 @@ export async function assignStudentToClassAction(
 }
 
 export async function createManagedUserAction(formData: FormData) {
-  if (!isSupabaseConfigured()) {
-    revalidatePath("/admin/users");
-    return;
-  }
-
   const adminClient = createAdminClient();
 
   if (!adminClient) {
-    throw new Error("SUPABASE_SERVICE_ROLE_KEY ontbreekt in .env.local");
+    throw new Error(
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+        ? getSupabaseConfigError() ?? "Supabase is niet geconfigureerd."
+        : "SUPABASE_SERVICE_ROLE_KEY ontbreekt in .env.local of Vercel environment variables."
+    );
   }
 
-  const schoolId = demoAdminOverview.school?.id;
+  const schoolId = await getSchoolId(adminClient);
   const role = String(formData.get("role"));
   const email = String(formData.get("email"));
   const password = String(formData.get("password"));
@@ -144,7 +150,7 @@ export async function createManagedUserAction(formData: FormData) {
     throw new Error(error.message);
   }
 
-  if (data.user && schoolId) {
+  if (data.user) {
     const { error: profileError } = await adminClient
       .from("profiles")
       .update({
@@ -167,15 +173,13 @@ export async function createSubjectAction(
   _previousState: FormActionState,
   formData: FormData
 ): Promise<FormActionState> {
-  if (!isSupabaseConfigured()) {
-    revalidatePath("/admin/subjects");
-    return { status: "success", message: "Vak is opgeslagen in demo-modus." };
-  }
-
   const supabase = createAdminClient() ?? (await createClient());
 
   if (!supabase) {
-    return { status: "error", message: "Verbinding met Supabase ontbreekt." };
+    return {
+      status: "error",
+      message: getSupabaseConfigError() ?? "Verbinding met Supabase ontbreekt."
+    };
   }
 
   const name = String(formData.get("name")).trim();
@@ -230,17 +234,13 @@ export async function createSubjectAction(
 }
 
 export async function createStudyProgramAction(formData: FormData) {
-  if (!isSupabaseConfigured()) {
-    revalidatePath("/admin/programs");
-    return;
-  }
-
   const supabase = createAdminClient() ?? (await createClient());
-  const schoolId = demoAdminOverview.school?.id;
 
-  if (!supabase || !schoolId) {
-    return;
+  if (!supabase) {
+    throw new Error(getSupabaseConfigError() ?? "Verbinding met Supabase ontbreekt.");
   }
+
+  const schoolId = await getSchoolId(supabase);
 
   const { error } = await supabase.from("study_programs").insert({
     school_id: schoolId,
@@ -261,15 +261,13 @@ export async function assignSubjectToClassAction(
   _previousState: FormActionState,
   formData: FormData
 ): Promise<FormActionState> {
-  if (!isSupabaseConfigured()) {
-    revalidatePath("/admin/subjects");
-    return { status: "success", message: "Vak is gekoppeld in demo-modus." };
-  }
-
   const supabase = createAdminClient() ?? (await createClient());
 
   if (!supabase) {
-    return { status: "error", message: "Verbinding met Supabase ontbreekt." };
+    return {
+      status: "error",
+      message: getSupabaseConfigError() ?? "Verbinding met Supabase ontbreekt."
+    };
   }
 
   const classId = String(formData.get("class_id"));

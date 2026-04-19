@@ -31,9 +31,9 @@ on conflict (id) do nothing;
 
 -- Maak eerst twee auth-gebruikers in Supabase Auth aan en vervang daarna de UUID's hieronder.
 -- Voorbeeldrollen:
--- admin@amto.demo
--- docent@amto.demo
--- student@amto.demo
+-- admin@school.local
+-- teacher@school.local
+-- student@school.local
 
 insert into public.class_subjects (id, class_id, subject_id, teacher_id)
 select
@@ -42,7 +42,7 @@ select
   '38888888-8888-8888-8888-888888888888',
   p.id
 from public.profiles p
-where p.email = 'docent@amto.demo'
+where p.email = 'teacher@school.local'
 on conflict (id) do nothing;
 
 insert into public.class_students (id, class_id, student_id)
@@ -51,7 +51,7 @@ select
   '41111111-1111-1111-1111-111111111111',
   p.id
 from public.profiles p
-where p.email = 'student@amto.demo'
+where p.email = 'student@school.local'
 on conflict (id) do nothing;
 
 insert into public.lessons (id, class_subject_id, title, content, created_by)
@@ -62,7 +62,7 @@ select
   'Introductie tot basissymbolen, eenvoudige schakelschema''s en veilig werken in het praktijklokaal.',
   p.id
 from public.profiles p
-where p.email = 'docent@amto.demo'
+where p.email = 'teacher@school.local'
 on conflict (id) do nothing;
 
 insert into public.assignments (id, class_subject_id, title, description, due_date, created_by)
@@ -74,5 +74,5 @@ select
   now() + interval '7 day',
   p.id
 from public.profiles p
-where p.email = 'docent@amto.demo'
+where p.email = 'teacher@school.local'
 on conflict (id) do nothing;

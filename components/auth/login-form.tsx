@@ -5,13 +5,14 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 type LoginFormProps = {
-  demoMode?: boolean;
+  disabled?: boolean;
+  configurationError?: string | null;
 };
 
-export function LoginForm({ demoMode }: LoginFormProps) {
+export function LoginForm({ disabled = false, configurationError }: LoginFormProps) {
   const params = useSearchParams();
-  const [email, setEmail] = useState("admin@amto.demo");
-  const [password, setPassword] = useState("Welkom123!");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -22,11 +23,6 @@ export function LoginForm({ demoMode }: LoginFormProps) {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
-
-    if (demoMode) {
-      window.location.href = "/dashboard";
-      return;
-    }
 
     const supabase = createClient();
 
@@ -58,6 +54,7 @@ export function LoginForm({ demoMode }: LoginFormProps) {
           suppressHydrationWarning
           className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-brand-300"
           type="email"
+          disabled={disabled}
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           autoComplete="email"
@@ -70,6 +67,7 @@ export function LoginForm({ demoMode }: LoginFormProps) {
           suppressHydrationWarning
           className="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm focus:border-brand-300"
           type="password"
+          disabled={disabled}
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           autoComplete="current-password"
@@ -80,14 +78,14 @@ export function LoginForm({ demoMode }: LoginFormProps) {
       <button
         suppressHydrationWarning
         type="submit"
-        disabled={loading}
+        disabled={loading || disabled}
         className="w-full rounded-2xl bg-brand-500 px-4 py-3 text-sm font-semibold text-white shadow-glow transition hover:bg-brand-600 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading ? "Bezig met inloggen..." : "Inloggen"}
       </button>
-      {demoMode ? (
-        <div className="rounded-2xl border border-brand-100 bg-brand-50 p-4 text-sm text-slate-700">
-          Demo modus is actief. Gebruik de knop hierboven om als demo-admin door te gaan.
+      {configurationError ? (
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900">
+          {configurationError}
         </div>
       ) : null}
     </form>

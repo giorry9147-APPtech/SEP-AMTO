@@ -4,7 +4,6 @@ import { AssignmentList } from "@/components/student/assignment-list";
 import { LessonList } from "@/components/student/lesson-list";
 import { SubjectGrid } from "@/components/student/subject-grid";
 import { EmptyState } from "@/components/ui/empty-state";
-import { isSupabaseConfigured } from "@/lib/env";
 import { requireRole } from "@/lib/auth/require-role";
 import { getStudentOverview } from "@/lib/queries/student";
 import {
@@ -45,7 +44,6 @@ export default async function StudentPortalPage() {
         navTitle="Student"
         navSubtitle="Dashboard"
         links={navLinks}
-        demoMode={!isSupabaseConfigured()}
       >
         <EmptyState
           title="Kies eerst je richting"
@@ -66,7 +64,6 @@ export default async function StudentPortalPage() {
       navTitle="Student"
       navSubtitle="Dashboard"
       links={navLinks}
-      demoMode={!isSupabaseConfigured()}
     >
       <section className="grid gap-4 md:grid-cols-3">
         {overview.stats.map((stat) => (

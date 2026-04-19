@@ -1,6 +1,5 @@
 import { AppShell } from "@/components/dashboard/app-shell";
 import { StudentEntryGate } from "@/components/student/student-entry-gate";
-import { isSupabaseConfigured } from "@/lib/env";
 import { requireRole } from "@/lib/auth/require-role";
 import { getStudentPrograms } from "@/lib/student-access-server";
 
@@ -26,7 +25,6 @@ export default async function StudentEntryPage() {
       navTitle="Student"
       navSubtitle="Toegang"
       links={navLinks}
-      demoMode={!isSupabaseConfigured()}
     >
       <StudentEntryGate programs={programs} studentId={profile.id} />
     </AppShell>

@@ -4,7 +4,6 @@ import { CreateSubjectForm } from "@/components/admin/create-subject-form";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { assignSubjectToClassAction, createSubjectAction } from "@/lib/actions/admin";
-import { isSupabaseConfigured } from "@/lib/env";
 import { requireRole } from "@/lib/auth/require-role";
 import { getAdminOverview } from "@/lib/queries/admin";
 
@@ -29,7 +28,6 @@ export default async function AdminSubjectsPage() {
       navTitle="Beheer"
       navSubtitle="Vakken"
       links={navLinks}
-      demoMode={!isSupabaseConfigured()}
     >
       <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
         <CreateSubjectForm action={createSubjectAction} />

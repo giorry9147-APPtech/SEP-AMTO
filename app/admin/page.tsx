@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { Route } from "next";
 import { AppShell } from "@/components/dashboard/app-shell";
 import { StatCard } from "@/components/dashboard/stat-card";
-import { isSupabaseConfigured } from "@/lib/env";
 import { requireRole } from "@/lib/auth/require-role";
 import { getAdminOverview } from "@/lib/queries/admin";
 
@@ -57,7 +56,6 @@ export default async function AdminPage() {
       navTitle="Beheer"
       navSubtitle="Admin portal"
       links={navLinks}
-      demoMode={!isSupabaseConfigured()}
     >
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
         {overview.stats.map((stat) => (

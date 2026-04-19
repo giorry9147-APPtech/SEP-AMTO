@@ -1,13 +1,13 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/auth/login-form";
-import { isSupabaseConfigured } from "@/lib/env";
+import { getSupabaseConfigError } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 
 export default async function LoginPage() {
-  const demoMode = !isSupabaseConfigured();
+  const configurationError = getSupabaseConfigError();
 
-  if (!demoMode) {
+  if (!configurationError) {
     const supabase = await createClient();
 
     if (supabase) {
@@ -70,12 +70,13 @@ export default async function LoginPage() {
               Welkom terug
             </h2>
             <p className="mt-4 max-w-lg text-base leading-8 text-slate-600">
-              {demoMode
-                ? "Supabase is nog niet geconfigureerd. De app draait in demo modus."
-                : "Gebruik een account uit Supabase Auth om door te gaan."}
+              {configurationError ?? "Gebruik een account uit Supabase Auth om door te gaan."}
             </p>
             <div className="mt-10">
-              <LoginForm demoMode={demoMode} />
+              <LoginForm
+                disabled={Boolean(configurationError)}
+                configurationError={configurationError}
+              />
             </div>
           </div>
         </section>

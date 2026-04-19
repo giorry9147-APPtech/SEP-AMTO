@@ -3,7 +3,6 @@ import { AppShell } from "@/components/dashboard/app-shell";
 import { AssignmentList } from "@/components/student/assignment-list";
 import { LessonList } from "@/components/student/lesson-list";
 import { EmptyState } from "@/components/ui/empty-state";
-import { isSupabaseConfigured } from "@/lib/env";
 import { getProfile } from "@/lib/auth/get-profile";
 import { getStudentOverview } from "@/lib/queries/student";
 import { getTeacherOverview } from "@/lib/queries/teacher";
@@ -74,7 +73,6 @@ export default async function SubjectDetailPage({
       navTitle={profile.role === "teacher" ? "Docent" : "Student"}
       navSubtitle="Vakdetail"
       links={links}
-      demoMode={!isSupabaseConfigured()}
     >
       <div className="grid gap-6 xl:grid-cols-2">
         <LessonList lessons={lessons.filter((lesson) => lesson.class_subject_id === id)} />

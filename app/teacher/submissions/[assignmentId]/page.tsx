@@ -2,7 +2,6 @@ import { AppShell } from "@/components/dashboard/app-shell";
 import { EmptyState } from "@/components/ui/empty-state";
 import { SubmissionList } from "@/components/teacher/submission-list";
 import { reviewSubmissionAction } from "@/lib/actions/teacher";
-import { isSupabaseConfigured } from "@/lib/env";
 import { requireRole } from "@/lib/auth/require-role";
 import { getTeacherOverview } from "@/lib/queries/teacher";
 
@@ -32,7 +31,6 @@ export default async function TeacherSubmissionsPage({
       navTitle="Docent"
       navSubtitle="Review"
       links={navLinks}
-      demoMode={!isSupabaseConfigured()}
     >
       {filtered.length ? (
         <SubmissionList submissions={filtered} action={reviewSubmissionAction} />

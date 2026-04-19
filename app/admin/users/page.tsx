@@ -1,7 +1,6 @@
 import { AppShell } from "@/components/dashboard/app-shell";
 import Link from "next/link";
 import { UserDirectory } from "@/components/admin/user-directory";
-import { isSupabaseConfigured } from "@/lib/env";
 import { requireRole } from "@/lib/auth/require-role";
 import { getAdminOverview } from "@/lib/queries/admin";
 
@@ -26,7 +25,6 @@ export default async function AdminUsersPage() {
       navTitle="Beheer"
       navSubtitle="Gebruikers"
       links={navLinks}
-      demoMode={!isSupabaseConfigured()}
     >
       <div className="grid gap-6 xl:grid-cols-2">
         <section className="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-panel">

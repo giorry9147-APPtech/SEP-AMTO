@@ -1,18 +1,31 @@
-import { demoTeacherOverview } from "@/lib/demo-data";
-import { isSupabaseConfigured } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
 import type { TeacherOverview } from "@/types/app";
 
+function createEmptyTeacherOverview(profile: TeacherOverview["profile"] = null): TeacherOverview {
+  return {
+    profile,
+    subjects: [],
+    lessons: [],
+    assignments: [],
+    submissions: [],
+    stats: [
+      { label: "Mijn vakken", value: "0", helper: "Vakken waar jij aan gekoppeld bent." },
+      { label: "Opdrachten", value: "0", helper: "Door jou geplaatste opdrachten." },
+      { label: "Submissions", value: "0", helper: "Inzendingen voor jouw opdrachten." }
+    ]
+  };
+}
+
 export async function getTeacherOverview(profileId?: string): Promise<TeacherOverview> {
-  if (!isSupabaseConfigured() || !profileId) {
-    return demoTeacherOverview;
+  if (!profileId) {
+    return createEmptyTeacherOverview();
   }
 
   try {
     const supabase = await createClient();
 
     if (!supabase) {
-      return demoTeacherOverview;
+      return createEmptyTeacherOverview();
     }
 
     const [profileResult, subjectsResult, assignmentsResult, submissionsResult] =
@@ -37,11 +50,11 @@ export async function getTeacherOverview(profileId?: string): Promise<TeacherOve
     const profile = profileResult.data;
 
     if (profileResult.error || !profile) {
-      return demoTeacherOverview;
+      return createEmptyTeacherOverview();
     }
 
     if (profile.role !== "teacher" && profile.role !== "admin") {
-      return demoTeacherOverview;
+      return createEmptyTeacherOverview(profile);
     }
 
     const subjects = (subjectsResult.data as TeacherOverview["subjects"]) ?? [];
@@ -68,8 +81,8 @@ export async function getTeacherOverview(profileId?: string): Promise<TeacherOve
 
     return {
       profile,
-      subjects: subjects.length ? subjects : demoTeacherOverview.subjects,
-      lessons: lessons.length ? lessons : demoTeacherOverview.lessons,
+      subjects,
+      lessons,
       assignments: assignmentItems,
       submissions: submissions.map((item) => ({
         ...item,
@@ -82,6 +95,6 @@ export async function getTeacherOverview(profileId?: string): Promise<TeacherOve
       ]
     };
   } catch {
-    return demoTeacherOverview;
+    return createEmptyTeacherOverview();
   }
 }

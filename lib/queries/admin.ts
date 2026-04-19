@@ -1,17 +1,27 @@
-import { demoAdminOverview } from "@/lib/demo-data";
-import { isSupabaseConfigured } from "@/lib/env";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
 import type { AdminOverview } from "@/types/app";
 
-export async function getAdminOverview(): Promise<AdminOverview> {
-  if (!isSupabaseConfigured()) {
-    return demoAdminOverview;
-  }
+function createEmptyAdminOverview(): AdminOverview {
+  return {
+    school: null,
+    programs: [],
+    subjects: [],
+    users: [],
+    classes: [],
+    stats: [
+      { label: "Studenten", value: "0", helper: "Actieve studenten in de database." },
+      { label: "Docenten", value: "0", helper: "Actieve docentaccounts." },
+      { label: "Klassen", value: "0", helper: "Beschikbare klassen." },
+      { label: "Vakken", value: "0", helper: "Geregistreerde vakken." }
+    ]
+  };
+}
 
+export async function getAdminOverview(): Promise<AdminOverview> {
   const supabase = createAdminClient() ?? (await createClient());
 
   if (!supabase) {
-    return demoAdminOverview;
+    return createEmptyAdminOverview();
   }
 
   const [schoolResult, programsResult, subjectsResult, usersResult, classesResult] =
