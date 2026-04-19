@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  typedRoutes: true,
   experimental: {
-    typedRoutes: true,
     serverActions: {
       bodySizeLimit: "15mb"
     }
