@@ -1,0 +1,65 @@
+import { AppShell } from "@/components/dashboard/app-shell";
+import { AssignSubjectForm } from "@/components/admin/assign-subject-form";
+import { CreateSubjectForm } from "@/components/admin/create-subject-form";
+import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge } from "@/components/ui/status-badge";
+import { assignSubjectToClassAction, createSubjectAction } from "@/lib/actions/admin";
+import { isSupabaseConfigured } from "@/lib/env";
+import { requireRole } from "@/lib/auth/require-role";
+import { getAdminOverview } from "@/lib/queries/admin";
+
+const navLinks = [
+  { href: "/admin", label: "Dashboard" },
+  { href: "/admin/classes", label: "Klassen" },
+  { href: "/admin/users", label: "Gebruikers" },
+  { href: "/admin/programs", label: "Richtingen" },
+  { href: "/admin/subjects", label: "Vakken" }
+] as const;
+
+export default async function AdminSubjectsPage() {
+  const profile = await requireRole(["admin"]);
+  const overview = await getAdminOverview();
+
+  return (
+    <AppShell
+      profile={profile}
+      currentPath="/admin/subjects"
+      title="Vakken"
+      description="Algemene en beroepsgerichte vakken die later aan klassen worden gekoppeld."
+      navTitle="Beheer"
+      navSubtitle="Vakken"
+      links={navLinks}
+      demoMode={!isSupabaseConfigured()}
+    >
+      <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
+        <CreateSubjectForm action={createSubjectAction} />
+        <AssignSubjectForm
+          classes={overview.classes.map((item) => ({ id: item.id, name: item.name }))}
+          subjects={overview.subjects.map((item) => ({ id: item.id, name: item.name }))}
+          teachers={overview.users
+            .filter((user) => user.role === "teacher")
+            .map((user) => ({ id: user.id, full_name: user.full_name }))}
+          action={assignSubjectToClassAction}
+        />
+      </div>
+      <section className="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-panel">
+        <div className="space-y-3">
+          {overview.subjects.length ? (
+            overview.subjects.map((subject) => (
+              <div key={subject.id} className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-4">
+                <div>
+                  <p className="font-medium text-slate-900">{subject.name}</p>
+                </div>
+                <StatusBadge variant={subject.subject_type === "vocational" ? "warning" : "info"}>
+                  {subject.subject_type}
+                </StatusBadge>
+              </div>
+            ))
+          ) : (
+            <EmptyState title="Nog geen vakken" description="Vakken verschijnen hier zodra ze zijn toegevoegd." />
+          )}
+        </div>
+      </section>
+    </AppShell>
+  );
+}
