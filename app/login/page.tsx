@@ -38,7 +38,7 @@ export default async function LoginPage() {
               />
             </div>
             <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">
-              Lesportaal voor Avond Middelbare technische Opleidingen
+              Lesportaal voor Avond Middelbare Technische Opleidingen
             </h1>
             <p className="mt-6 max-w-xl text-base leading-8 text-slate-300">
               Log in als admin, docent of student en beheer klassen, vakken, lessen,
