@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "dev:clean": "powershell -Command \"if (Test-Path .next\\\\cache) { Remove-Item -LiteralPath .next\\\\cache -Recurse -Force }; npm.cmd run dev\"",
+    "dev:clean": "powershell -Command \"if (Test-Path .next) { Remove-Item -LiteralPath .next -Recurse -Force }; npm.cmd run dev\"",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",

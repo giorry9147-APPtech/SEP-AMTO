@@ -1,14 +1,18 @@
-const requiredSupabaseEnvVars = [
-  "NEXT_PUBLIC_SUPABASE_URL",
-  "NEXT_PUBLIC_SUPABASE_ANON_KEY"
-] as const;
+const publicSupabaseEnv = {
+  NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL,
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+} as const;
 
 export function isSupabaseConfigured() {
   return getMissingSupabaseEnvVars().length === 0;
 }
 
 export function getMissingSupabaseEnvVars() {
-  return requiredSupabaseEnvVars.filter((key) => !process.env[key]);
+  return (Object.entries(publicSupabaseEnv) as Array<
+    [keyof typeof publicSupabaseEnv, string | undefined]
+  >)
+    .filter(([, value]) => !value)
+    .map(([key]) => key);
 }
 
 export function getSupabaseConfigError() {
