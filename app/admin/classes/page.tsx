@@ -11,7 +11,8 @@ const navLinks = [
   { href: "/admin/classes", label: "Klassen" },
   { href: "/admin/users", label: "Gebruikers" },
   { href: "/admin/programs", label: "Richtingen" },
-  { href: "/admin/subjects", label: "Vakken" }
+  { href: "/admin/subjects", label: "Vakken" },
+  { href: "/admin/lists", label: "Lijsten" }
 ] as const;
 
 export default async function AdminClassesPage() {

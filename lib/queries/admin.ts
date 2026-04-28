@@ -1,5 +1,5 @@
 import { createAdminClient, createClient } from "@/lib/supabase/server";
-import type { AdminOverview } from "@/types/app";
+import type { AdminListsData, AdminOverview } from "@/types/app";
 
 function createEmptyAdminOverview(): AdminOverview {
   return {
@@ -82,5 +82,83 @@ export async function getAdminOverview(): Promise<AdminOverview> {
       { label: "Klassen", value: String(mappedClasses.length), helper: "Beschikbare klassen." },
       { label: "Vakken", value: String(subjects.length), helper: "Geregistreerde vakken." }
     ]
+  };
+}
+
+export async function getAdminLists(): Promise<AdminListsData> {
+  const supabase = createAdminClient() ?? (await createClient());
+
+  if (!supabase) {
+    return { classRosters: [], teacherRosters: [], studentEnrollments: [] };
+  }
+
+  const [classesResult, classSubjectsResult, classStudentsResult] = await Promise.all([
+    supabase
+      .from("classes")
+      .select("id, name, year_level, study_program:study_programs(name, code), class_students(student:profiles!class_students_student_id_fkey(id, full_name, email))")
+      .order("name"),
+    supabase
+      .from("class_subjects")
+      .select("teacher:profiles!class_subjects_teacher_id_fkey(id, full_name, email), subject:subjects(name), class_room:classes(name, year_level, study_program:study_programs(name, code))"),
+    supabase
+      .from("class_students")
+      .select("student:profiles!class_students_student_id_fkey(id, full_name, email), class_room:classes(name, year_level, study_program:study_programs(name, code))")
+  ]);
+
+  const classRosters = (classesResult.data ?? []).map((cls: any) => ({
+    id: cls.id,
+    name: cls.name,
+    year_level: cls.year_level,
+    program_name: cls.study_program?.name ?? "Onbekend",
+    program_code: cls.study_program?.code ?? "",
+    students: (cls.class_students ?? [])
+      .map((cs: any) => cs.student)
+      .filter(Boolean)
+      .map((s: any) => ({ id: s.id, full_name: s.full_name, email: s.email }))
+  }));
+
+  const teacherMap = new Map<string, import("@/types/app").TeacherRosterItem>();
+  for (const row of (classSubjectsResult.data ?? []) as any[]) {
+    const teacher = row.teacher;
+    if (!teacher) continue;
+    const entry = teacherMap.get(teacher.id) ?? {
+      teacher_id: teacher.id,
+      teacher_name: teacher.full_name,
+      teacher_email: teacher.email,
+      assignments: []
+    };
+    const cr = row.class_room;
+    entry.assignments.push({
+      subject_name: row.subject?.name ?? "Onbekend",
+      class_name: cr?.name ?? "Onbekend",
+      year_level: cr?.year_level ?? 0,
+      program_name: cr?.study_program?.name ?? "Onbekend"
+    });
+    teacherMap.set(teacher.id, entry);
+  }
+
+  const studentEnrollments = (classStudentsResult.data ?? [])
+    .map((row: any) => {
+      const s = row.student;
+      const cr = row.class_room;
+      if (!s || !cr) return null;
+      return {
+        student_id: s.id,
+        student_name: s.full_name,
+        student_email: s.email,
+        class_name: cr.name,
+        year_level: cr.year_level,
+        program_name: cr.study_program?.name ?? "Onbekend",
+        program_code: cr.study_program?.code ?? ""
+      };
+    })
+    .filter(Boolean) as import("@/types/app").StudentEnrollmentItem[];
+
+  return {
+    classRosters,
+    teacherRosters: Array.from(teacherMap.values()).sort((a, b) =>
+      a.teacher_name.localeCompare(b.teacher_name)
+    ),
+    studentEnrollments
   };
 }

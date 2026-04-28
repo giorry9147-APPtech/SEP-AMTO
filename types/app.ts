@@ -87,3 +87,40 @@ export type StudentOverview = {
 export type StudentProgramOption = Pick<StudyProgram, "id" | "name" | "code"> & {
   description?: string | null;
 };
+
+export type ClassRosterItem = {
+  id: string;
+  name: string;
+  year_level: number;
+  program_name: string;
+  program_code: string;
+  students: Array<{ id: string; full_name: string; email: string }>;
+};
+
+export type TeacherRosterItem = {
+  teacher_id: string;
+  teacher_name: string;
+  teacher_email: string;
+  assignments: Array<{
+    subject_name: string;
+    class_name: string;
+    year_level: number;
+    program_name: string;
+  }>;
+};
+
+export type StudentEnrollmentItem = {
+  student_id: string;
+  student_name: string;
+  student_email: string;
+  class_name: string;
+  year_level: number;
+  program_name: string;
+  program_code: string;
+};
+
+export type AdminListsData = {
+  classRosters: ClassRosterItem[];
+  teacherRosters: TeacherRosterItem[];
+  studentEnrollments: StudentEnrollmentItem[];
+};
