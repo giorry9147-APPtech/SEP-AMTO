@@ -121,7 +121,7 @@ export async function getAdminLists(): Promise<AdminListsData> {
   for (const row of (classSubjectsResult.data ?? []) as any[]) {
     const teacher = row.teacher;
     if (!teacher) continue;
-    const entry = teacherMap.get(teacher.id) ?? {
+    const entry: TeacherRosterItem = teacherMap.get(teacher.id) ?? {
       teacher_id: teacher.id,
       teacher_name: teacher.full_name,
       teacher_email: teacher.email,
