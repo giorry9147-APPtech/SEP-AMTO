@@ -147,6 +147,8 @@ create or replace function public.is_teacher_of_class_subject(cs_id uuid)
 returns boolean
 language sql
 stable
+security definer
+set search_path = public
 as $$
   select exists (
     select 1
@@ -160,6 +162,8 @@ create or replace function public.is_student_in_class_subject(cs_id uuid)
 returns boolean
 language sql
 stable
+security definer
+set search_path = public
 as $$
   select exists (
     select 1
@@ -174,6 +178,8 @@ create or replace function public.owns_submission(sub_id uuid)
 returns boolean
 language sql
 stable
+security definer
+set search_path = public
 as $$
   select exists (
     select 1
@@ -187,6 +193,8 @@ create or replace function public.is_teacher_of_assignment(a_id uuid)
 returns boolean
 language sql
 stable
+security definer
+set search_path = public
 as $$
   select exists (
     select 1
@@ -196,6 +204,11 @@ as $$
       and cs.teacher_id = auth.uid()
   )
 $$;
+
+grant execute on function public.is_teacher_of_class_subject(uuid) to authenticated, anon;
+grant execute on function public.is_student_in_class_subject(uuid) to authenticated, anon;
+grant execute on function public.owns_submission(uuid) to authenticated, anon;
+grant execute on function public.is_teacher_of_assignment(uuid) to authenticated, anon;
 
 create or replace function public.handle_new_user()
 returns trigger

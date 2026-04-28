@@ -27,6 +27,12 @@ using (
   and school_id = public.current_user_school_id()
 );
 
+create policy "profiles_select_teacher_student"
+on public.profiles
+for select
+to authenticated
+using (public.is_student_of_teacher(id));
+
 create policy "profiles_update_own"
 on public.profiles
 for update

@@ -14,8 +14,8 @@ export function SubmissionList({ submissions, action }: SubmissionListProps) {
         <article key={submission.id} className="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-panel">
           <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
             <div>
-              <h3 className="text-lg font-semibold text-slate-900">{submission.student.full_name}</h3>
-              <p className="text-sm text-slate-500">{submission.assignment.title}</p>
+              <h3 className="text-lg font-semibold text-slate-900">{submission.student?.full_name ?? "Onbekend"}</h3>
+              <p className="text-sm text-slate-500">{submission.assignment?.title ?? "Opdracht"}</p>
               <p className="mt-2 text-sm text-slate-600">
                 Ingeleverd op {formatDate(submission.submitted_at)}
               </p>
