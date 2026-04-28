@@ -1,10 +1,10 @@
 import { cookies } from "next/headers";
 import type { StudentSelection } from "@/lib/student-access";
 import type { StudentProgramOption } from "@/types/app";
-import { createClient } from "@/lib/supabase/server";
+import { createAdminClient, createClient } from "@/lib/supabase/server";
 
 export async function getStudentPrograms(): Promise<StudentProgramOption[]> {
-  const supabase = await createClient();
+  const supabase = createAdminClient() ?? (await createClient());
 
   if (!supabase) {
     return [];
