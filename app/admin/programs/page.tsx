@@ -1,7 +1,8 @@
 import { AppShell } from "@/components/dashboard/app-shell";
 import { CreateProgramForm } from "@/components/admin/create-program-form";
+import { DeleteResourceForm } from "@/components/admin/delete-resource-form";
 import { EmptyState } from "@/components/ui/empty-state";
-import { createStudyProgramAction } from "@/lib/actions/admin";
+import { createStudyProgramAction, deleteStudyProgramAction } from "@/lib/actions/admin";
 import { requireRole } from "@/lib/auth/require-role";
 import { getAdminOverview } from "@/lib/queries/admin";
 
@@ -62,8 +63,18 @@ export default async function AdminProgramsPage() {
 
             return (
               <article key={program.id} className="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-panel">
-                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-600">{program.code}</p>
-                <h3 className="mt-3 text-xl font-semibold text-slate-950">{program.name}</h3>
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-brand-600">{program.code}</p>
+                    <h3 className="mt-3 text-xl font-semibold text-slate-950">{program.name}</h3>
+                  </div>
+                  <DeleteResourceForm
+                    action={deleteStudyProgramAction}
+                    id={program.id}
+                    label={program.name}
+                    resourceName="richting"
+                  />
+                </div>
                 <p className="mt-3 text-sm text-slate-600">
                   {programClasses.length} gekoppelde klassen
                 </p>

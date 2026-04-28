@@ -1,9 +1,10 @@
 import { AppShell } from "@/components/dashboard/app-shell";
 import { AssignSubjectForm } from "@/components/admin/assign-subject-form";
 import { CreateSubjectForm } from "@/components/admin/create-subject-form";
+import { DeleteResourceForm } from "@/components/admin/delete-resource-form";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { assignSubjectToClassAction, createSubjectAction } from "@/lib/actions/admin";
+import { assignSubjectToClassAction, createSubjectAction, deleteSubjectAction } from "@/lib/actions/admin";
 import { requireRole } from "@/lib/auth/require-role";
 import { getAdminOverview } from "@/lib/queries/admin";
 
@@ -44,13 +45,21 @@ export default async function AdminSubjectsPage() {
         <div className="space-y-3">
           {overview.subjects.length ? (
             overview.subjects.map((subject) => (
-              <div key={subject.id} className="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-4">
+              <div key={subject.id} className="flex flex-col gap-3 rounded-2xl bg-slate-50 px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="font-medium text-slate-900">{subject.name}</p>
                 </div>
-                <StatusBadge variant={subject.subject_type === "vocational" ? "warning" : "info"}>
-                  {subject.subject_type}
-                </StatusBadge>
+                <div className="flex flex-wrap items-center gap-3">
+                  <StatusBadge variant={subject.subject_type === "vocational" ? "warning" : "info"}>
+                    {subject.subject_type}
+                  </StatusBadge>
+                  <DeleteResourceForm
+                    action={deleteSubjectAction}
+                    id={subject.id}
+                    label={subject.name}
+                    resourceName="vak"
+                  />
+                </div>
               </div>
             ))
           ) : (

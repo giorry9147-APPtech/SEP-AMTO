@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import type { FormActionState } from "@/lib/actions/form-state";
+import { requireRole } from "@/lib/auth/require-role";
 import { getSupabaseConfigError } from "@/lib/env";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
 
@@ -17,6 +18,34 @@ async function getSchoolId(supabase: any) {
   }
 
   return data.id as string;
+}
+
+function getRequiredAdminClient() {
+  const adminClient = createAdminClient();
+
+  if (!adminClient) {
+    throw new Error(
+      process.env.SUPABASE_SERVICE_ROLE_KEY
+        ? getSupabaseConfigError() ?? "Supabase is niet geconfigureerd."
+        : "SUPABASE_SERVICE_ROLE_KEY ontbreekt in .env.local of Vercel environment variables."
+    );
+  }
+
+  return adminClient;
+}
+
+function revalidateAdminDashboard() {
+  revalidatePath("/admin");
+  revalidatePath("/admin/classes");
+  revalidatePath("/admin/programs");
+  revalidatePath("/admin/subjects");
+  revalidatePath("/admin/users");
+  revalidatePath("/teacher");
+  revalidatePath("/teacher/subjects");
+  revalidatePath("/student");
+  revalidatePath("/student/portal");
+  revalidatePath("/student/assignments");
+  revalidatePath("/student/submissions");
 }
 
 export async function createClassAction(formData: FormData) {
@@ -118,6 +147,96 @@ export async function assignStudentToClassAction(
       ? "Student is verplaatst naar de nieuwe klas."
       : "Student is gekoppeld aan de klas."
   };
+}
+
+export async function deleteManagedUserAction(formData: FormData) {
+  await requireRole(["admin"]);
+  const adminClient = getRequiredAdminClient();
+  const userId = String(formData.get("id"));
+
+  const { data: profile, error: profileError } = await adminClient
+    .from("profiles")
+    .select("id, role")
+    .eq("id", userId)
+    .maybeSingle();
+
+  if (profileError) {
+    throw new Error(`Gebruiker ophalen mislukt: ${profileError.message}`);
+  }
+
+  if (!profile) {
+    throw new Error("Gebruiker niet gevonden.");
+  }
+
+  if (profile.role !== "student" && profile.role !== "teacher") {
+    throw new Error("Alleen studenten en docenten kunnen hier worden verwijderd.");
+  }
+
+  if (profile.role === "student") {
+    const { error: classStudentsError } = await adminClient
+      .from("class_students")
+      .delete()
+      .eq("student_id", userId);
+
+    if (classStudentsError) {
+      throw new Error(`Klasverwijzingen verwijderen mislukt: ${classStudentsError.message}`);
+    }
+
+    const { error: submissionsError } = await adminClient
+      .from("submissions")
+      .delete()
+      .eq("student_id", userId);
+
+    if (submissionsError) {
+      throw new Error(`Inzendingen verwijderen mislukt: ${submissionsError.message}`);
+    }
+  }
+
+  if (profile.role === "teacher") {
+    const { error: reviewsError } = await adminClient
+      .from("submission_reviews")
+      .delete()
+      .eq("teacher_id", userId);
+
+    if (reviewsError) {
+      throw new Error(`Beoordelingen verwijderen mislukt: ${reviewsError.message}`);
+    }
+
+    const { error: assignmentsError } = await adminClient
+      .from("assignments")
+      .delete()
+      .eq("created_by", userId);
+
+    if (assignmentsError) {
+      throw new Error(`Opdrachten verwijderen mislukt: ${assignmentsError.message}`);
+    }
+
+    const { error: lessonsError } = await adminClient
+      .from("lessons")
+      .delete()
+      .eq("created_by", userId);
+
+    if (lessonsError) {
+      throw new Error(`Lessen verwijderen mislukt: ${lessonsError.message}`);
+    }
+
+    const { error: classSubjectsError } = await adminClient
+      .from("class_subjects")
+      .delete()
+      .eq("teacher_id", userId);
+
+    if (classSubjectsError) {
+      throw new Error(`Vaktoewijzingen verwijderen mislukt: ${classSubjectsError.message}`);
+    }
+  }
+
+  const { error } = await adminClient.auth.admin.deleteUser(userId);
+
+  if (error) {
+    throw new Error(`Gebruiker verwijderen mislukt: ${error.message}`);
+  }
+
+  revalidateAdminDashboard();
 }
 
 export async function createManagedUserAction(formData: FormData) {
@@ -255,6 +374,52 @@ export async function createStudyProgramAction(formData: FormData) {
   revalidatePath("/admin");
   revalidatePath("/admin/programs");
   revalidatePath("/admin/classes");
+}
+
+export async function deleteStudyProgramAction(formData: FormData) {
+  await requireRole(["admin"]);
+  const adminClient = getRequiredAdminClient();
+  const programId = String(formData.get("id"));
+
+  const { error: classesError } = await adminClient
+    .from("classes")
+    .delete()
+    .eq("study_program_id", programId);
+
+  if (classesError) {
+    throw new Error(`Klassen van richting verwijderen mislukt: ${classesError.message}`);
+  }
+
+  const { error } = await adminClient.from("study_programs").delete().eq("id", programId);
+
+  if (error) {
+    throw new Error(`Richting verwijderen mislukt: ${error.message}`);
+  }
+
+  revalidateAdminDashboard();
+}
+
+export async function deleteSubjectAction(formData: FormData) {
+  await requireRole(["admin"]);
+  const adminClient = getRequiredAdminClient();
+  const subjectId = String(formData.get("id"));
+
+  const { error: classSubjectsError } = await adminClient
+    .from("class_subjects")
+    .delete()
+    .eq("subject_id", subjectId);
+
+  if (classSubjectsError) {
+    throw new Error(`Vaktoewijzingen verwijderen mislukt: ${classSubjectsError.message}`);
+  }
+
+  const { error } = await adminClient.from("subjects").delete().eq("id", subjectId);
+
+  if (error) {
+    throw new Error(`Vak verwijderen mislukt: ${error.message}`);
+  }
+
+  revalidateAdminDashboard();
 }
 
 export async function assignSubjectToClassAction(

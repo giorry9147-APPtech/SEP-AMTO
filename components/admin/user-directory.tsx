@@ -1,22 +1,26 @@
 "use client";
 
 import { useState } from "react";
+import { DeleteResourceForm } from "@/components/admin/delete-resource-form";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import type { Profile } from "@/types/database";
 
 type UserDirectoryProps = {
   users: Profile[];
+  deleteUserAction: (formData: FormData) => Promise<void>;
 };
 
 function UserListSection({
   title,
   users,
-  badgeVariant
+  badgeVariant,
+  deleteUserAction
 }: {
   title: string;
   users: Profile[];
   badgeVariant: "success" | "warning" | "info";
+  deleteUserAction?: (formData: FormData) => Promise<void>;
 }) {
   return (
     <section className="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-panel">
@@ -35,7 +39,17 @@ function UserListSection({
                 <p className="font-medium text-slate-900">{user.full_name}</p>
                 <p className="text-sm text-slate-500">{user.email}</p>
               </div>
-              <StatusBadge variant={badgeVariant}>{user.role}</StatusBadge>
+              <div className="flex flex-wrap items-center gap-3">
+                <StatusBadge variant={badgeVariant}>{user.role}</StatusBadge>
+                {deleteUserAction ? (
+                  <DeleteResourceForm
+                    action={deleteUserAction}
+                    id={user.id}
+                    label={user.full_name}
+                    resourceName={user.role === "teacher" ? "docent" : "student"}
+                  />
+                ) : null}
+              </div>
             </div>
           ))
         ) : (
@@ -46,7 +60,7 @@ function UserListSection({
   );
 }
 
-export function UserDirectory({ users }: UserDirectoryProps) {
+export function UserDirectory({ users, deleteUserAction }: UserDirectoryProps) {
   const [query, setQuery] = useState("");
   const normalizedQuery = query.trim().toLowerCase();
 
@@ -88,8 +102,18 @@ export function UserDirectory({ users }: UserDirectoryProps) {
       </section>
 
       <div className="grid gap-6 xl:grid-cols-2">
-        <UserListSection title="Docenten" users={teachers} badgeVariant="warning" />
-        <UserListSection title="Studenten" users={students} badgeVariant="success" />
+        <UserListSection
+          title="Docenten"
+          users={teachers}
+          badgeVariant="warning"
+          deleteUserAction={deleteUserAction}
+        />
+        <UserListSection
+          title="Studenten"
+          users={students}
+          badgeVariant="success"
+          deleteUserAction={deleteUserAction}
+        />
       </div>
 
       <section className="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-panel">

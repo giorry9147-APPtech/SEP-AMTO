@@ -1,6 +1,7 @@
 import { AppShell } from "@/components/dashboard/app-shell";
 import Link from "next/link";
 import { UserDirectory } from "@/components/admin/user-directory";
+import { deleteManagedUserAction } from "@/lib/actions/admin";
 import { requireRole } from "@/lib/auth/require-role";
 import { getAdminOverview } from "@/lib/queries/admin";
 
@@ -60,7 +61,7 @@ export default async function AdminUsersPage() {
           </Link>
         </section>
       </div>
-      <UserDirectory users={overview.users} />
+      <UserDirectory users={overview.users} deleteUserAction={deleteManagedUserAction} />
     </AppShell>
   );
 }
