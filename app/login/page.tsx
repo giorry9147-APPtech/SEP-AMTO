@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { LoginForm } from "@/components/auth/login-form";
 import { getSupabaseConfigError } from "@/lib/env";
 import { createClient } from "@/lib/supabase/server";
+import { getStudentPrograms } from "@/lib/student-access-server";
 
 export default async function LoginPage() {
   const configurationError = getSupabaseConfigError();
@@ -20,6 +21,8 @@ export default async function LoginPage() {
       }
     }
   }
+
+  const programs = await getStudentPrograms();
 
   return (
     <main className="min-h-screen">
@@ -45,17 +48,12 @@ export default async function LoginPage() {
               opdrachten en inzendingen vanuit een krachtige portalomgeving.
             </p>
             <div className="mt-10 grid w-full gap-4 sm:grid-cols-2">
-              {[
-                "Bouwkunde",
-                "Elektrotechniek",
-                "Weg- en waterbouwkunde",
-                "Werktuigbouwkunde"
-              ].map((item) => (
+              {programs.map((program) => (
                 <div
-                  key={item}
+                  key={program.id}
                   className="rounded-[22px] border border-white/10 bg-white/5 px-5 py-4 text-base"
                 >
-                  {item}
+                  {program.name}
                 </div>
               ))}
             </div>
