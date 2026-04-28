@@ -376,6 +376,22 @@ export async function createStudyProgramAction(formData: FormData) {
   revalidatePath("/admin/classes");
 }
 
+export async function deleteClassAction(formData: FormData) {
+  await requireRole(["admin"]);
+  const adminClient = getRequiredAdminClient();
+  const classId = String(formData.get("id"));
+
+  const { error } = await adminClient.from("classes").delete().eq("id", classId);
+
+  if (error) {
+    throw new Error(`Klas verwijderen mislukt: ${error.message}`);
+  }
+
+  revalidatePath("/admin");
+  revalidatePath("/admin/classes");
+  revalidatePath("/admin/lists");
+}
+
 export async function deleteStudyProgramAction(formData: FormData) {
   await requireRole(["admin"]);
   const adminClient = getRequiredAdminClient();

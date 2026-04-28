@@ -1,8 +1,9 @@
 import { AppShell } from "@/components/dashboard/app-shell";
 import { AssignStudentForm } from "@/components/admin/assign-student-form";
 import { CreateClassForm } from "@/components/admin/create-class-form";
+import { DeleteResourceForm } from "@/components/admin/delete-resource-form";
 import { EmptyState } from "@/components/ui/empty-state";
-import { createClassAction, assignStudentToClassAction } from "@/lib/actions/admin";
+import { createClassAction, assignStudentToClassAction, deleteClassAction } from "@/lib/actions/admin";
 import { requireRole } from "@/lib/auth/require-role";
 import { getAdminOverview } from "@/lib/queries/admin";
 
@@ -63,7 +64,15 @@ export default async function AdminClassesPage() {
                     {item.study_program.name} • leerjaar {item.year_level} • cohort {item.cohort_year}
                   </p>
                 </div>
-                <p className="text-sm text-slate-600">{item.student_count} studenten</p>
+                <div className="flex items-center gap-3">
+                  <p className="text-sm text-slate-600">{item.student_count} studenten</p>
+                  <DeleteResourceForm
+                    action={deleteClassAction}
+                    id={item.id}
+                    label={item.name}
+                    resourceName="klas"
+                  />
+                </div>
               </div>
             ))
           ) : (
