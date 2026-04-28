@@ -80,6 +80,15 @@ export type Assignment = {
   created_at: string;
 };
 
+export type AssignmentFile = {
+  id: string;
+  assignment_id: string;
+  file_name: string;
+  file_path: string;
+  uploaded_by: string | null;
+  uploaded_at: string;
+};
+
 export type Submission = {
   id: string;
   assignment_id: string;

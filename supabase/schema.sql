@@ -87,6 +87,15 @@ create table if not exists public.assignments (
   created_at timestamptz not null default now()
 );
 
+create table if not exists public.assignment_files (
+  id uuid primary key default gen_random_uuid(),
+  assignment_id uuid not null references public.assignments(id) on delete cascade,
+  file_name text not null,
+  file_path text not null,
+  uploaded_by uuid references public.profiles(id) on delete set null,
+  uploaded_at timestamptz not null default now()
+);
+
 create table if not exists public.submissions (
   id uuid primary key default gen_random_uuid(),
   assignment_id uuid not null references public.assignments(id) on delete cascade,

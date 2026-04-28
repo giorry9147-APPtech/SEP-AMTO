@@ -29,6 +29,21 @@ export function AssignmentList({ assignments, actionLabel, actionHref }: Assignm
             <p className="text-sm font-medium text-slate-700">Deadline: {formatDate(assignment.due_date)}</p>
           </div>
           <p className="mt-3 text-sm leading-6 text-slate-600">{assignment.description || "Geen aanvullende beschrijving."}</p>
+          {assignment.files?.length ? (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {assignment.files.map((file) => (
+                <a
+                  key={file.id}
+                  href={file.download_url ?? "#"}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex rounded-2xl bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700"
+                >
+                  {file.file_name}
+                </a>
+              ))}
+            </div>
+          ) : null}
           {actionLabel && actionHref ? (
             <Link
               href={actionHref(assignment)}

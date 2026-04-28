@@ -40,13 +40,21 @@ export async function uploadSubmissionAction(formData: FormData) {
     filePath = upload.path;
   }
 
-  const { error } = await supabase.from("submissions").upsert({
+  const submissionData: Record<string, string | null> = {
     assignment_id: assignmentId,
     student_id: user.id,
     comment: String(formData.get("comment") || ""),
-    file_path: filePath,
-    status: "submitted"
-  });
+    status: "submitted",
+    submitted_at: new Date().toISOString()
+  };
+
+  if (filePath) {
+    submissionData.file_path = filePath;
+  }
+
+  const { error } = await supabase
+    .from("submissions")
+    .upsert(submissionData, { onConflict: "assignment_id,student_id" });
 
   if (error) {
     throw new Error(error.message);

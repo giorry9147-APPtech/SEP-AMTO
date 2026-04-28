@@ -1,7 +1,9 @@
 import { createAdminClient, createClient } from "@/lib/supabase/server";
 import { isSupabaseConfigured } from "@/lib/env";
 
-export async function uploadStorageFile(bucket: "lesson-files" | "submission-files", path: string, file: File) {
+type StorageBucket = "lesson-files" | "submission-files" | "assignment-files";
+
+export async function uploadStorageFile(bucket: StorageBucket, path: string, file: File) {
   if (!isSupabaseConfigured()) {
     return { path, error: null };
   }
@@ -22,7 +24,7 @@ export async function uploadStorageFile(bucket: "lesson-files" | "submission-fil
   return { path: error ? null : path, error: error?.message ?? null };
 }
 
-export async function getStorageObjectUrl(bucket: "lesson-files" | "submission-files", path?: string | null) {
+export async function getStorageObjectUrl(bucket: StorageBucket, path?: string | null) {
   if (!path) {
     return null;
   }

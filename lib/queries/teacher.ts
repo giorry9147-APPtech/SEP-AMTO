@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { getStorageObjectUrl } from "@/lib/supabase/storage";
 import type { TeacherOverview } from "@/types/app";
 
 function createEmptyTeacherOverview(profile: TeacherOverview["profile"] = null): TeacherOverview {
@@ -66,28 +67,54 @@ export async function getTeacherOverview(profileId?: string): Promise<TeacherOve
       })) as TeacherOverview["lessons"];
     const assignments = assignmentsResult.data ?? [];
     const submissions = submissionsResult.data ?? [];
+    const assignmentIds = assignments.map((item) => item.id);
+    const assignmentFilesByAssignment = new Map<string, any[]>();
 
-    const assignmentItems = assignments.map((item) => ({
-      id: item.id,
-      class_subject_id: item.class_subject_id,
-      title: item.title,
-      description: item.description,
-      due_date: item.due_date,
-      created_by: item.created_by,
-      created_at: item.created_at,
-      subject_name: item.class_subject?.subject?.name ?? "Vak",
-      class_name: item.class_subject?.class_room?.name ?? "Klas"
-    }));
+    if (assignmentIds.length) {
+      const { data: assignmentFiles } = await supabase
+        .from("assignment_files")
+        .select("*")
+        .in("assignment_id", assignmentIds);
+
+      await Promise.all(
+        (assignmentFiles ?? []).map(async (file) => {
+          const files = assignmentFilesByAssignment.get(file.assignment_id) ?? [];
+          files.push({
+            ...file,
+            download_url: await getStorageObjectUrl("assignment-files", file.file_path)
+          });
+          assignmentFilesByAssignment.set(file.assignment_id, files);
+        })
+      );
+    }
+
+    const assignmentItems = await Promise.all(
+      assignments.map(async (item) => ({
+        id: item.id,
+        class_subject_id: item.class_subject_id,
+        title: item.title,
+        description: item.description,
+        due_date: item.due_date,
+        created_by: item.created_by,
+        created_at: item.created_at,
+        subject_name: item.class_subject?.subject?.name ?? "Vak",
+        class_name: item.class_subject?.class_room?.name ?? "Klas",
+        files: assignmentFilesByAssignment.get(item.id) ?? []
+      }))
+    );
 
     return {
       profile,
       subjects,
       lessons,
       assignments: assignmentItems,
-      submissions: submissions.map((item) => ({
-        ...item,
-        review: Array.isArray(item.review) ? item.review[0] ?? null : item.review
-      })),
+      submissions: await Promise.all(
+        submissions.map(async (item) => ({
+          ...item,
+          file_url: await getStorageObjectUrl("submission-files", item.file_path),
+          review: Array.isArray(item.review) ? item.review[0] ?? null : item.review
+        }))
+      ),
       stats: [
         { label: "Mijn vakken", value: String(subjects.length), helper: "Vakken waar jij aan gekoppeld bent." },
         { label: "Opdrachten", value: String(assignmentItems.length), helper: "Door jou geplaatste opdrachten." },

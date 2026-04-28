@@ -77,12 +77,41 @@ export async function getStudentOverview(profileId?: string): Promise<StudentOve
       }))
     ) as StudentOverview["lessons"];
 
-    const assignments = classSubjectRows.flatMap((item) =>
+    const assignmentItems = classSubjectRows.flatMap((item) =>
       (item.assignments ?? []).map((assignment: any) => ({
-        ...assignment,
+        assignment,
         subject_name: item.subject?.name ?? "Vak",
         class_name: item.class_room?.name ?? "Klas"
       }))
+    );
+    const assignmentIds = assignmentItems.map((item) => item.assignment.id);
+    const assignmentFilesByAssignment = new Map<string, any[]>();
+
+    if (assignmentIds.length) {
+      const { data: assignmentFiles } = await supabase
+        .from("assignment_files")
+        .select("*")
+        .in("assignment_id", assignmentIds);
+
+      await Promise.all(
+        (assignmentFiles ?? []).map(async (file) => {
+          const files = assignmentFilesByAssignment.get(file.assignment_id) ?? [];
+          files.push({
+            ...file,
+            download_url: await getStorageObjectUrl("assignment-files", file.file_path)
+          });
+          assignmentFilesByAssignment.set(file.assignment_id, files);
+        })
+      );
+    }
+
+    const assignments = assignmentItems.map(
+      ({ assignment, subject_name, class_name }) => ({
+          ...assignment,
+          subject_name,
+          class_name,
+          files: assignmentFilesByAssignment.get(assignment.id) ?? []
+        })
     ) as StudentOverview["assignments"];
 
     return {
@@ -90,10 +119,13 @@ export async function getStudentOverview(profileId?: string): Promise<StudentOve
       subjects,
       lessons,
       assignments,
-      submissions: submissions.map((item) => ({
-        ...item,
-        review: Array.isArray(item.review) ? item.review[0] ?? null : item.review
-      })),
+      submissions: await Promise.all(
+        submissions.map(async (item) => ({
+          ...item,
+          file_url: await getStorageObjectUrl("submission-files", item.file_path),
+          review: Array.isArray(item.review) ? item.review[0] ?? null : item.review
+        }))
+      ),
       stats: [
         { label: "Mijn vakken", value: String(subjects.length), helper: "Vakken binnen jouw klas." },
         { label: "Opdrachten", value: String(assignments.length), helper: "Beschikbare opdrachten." },

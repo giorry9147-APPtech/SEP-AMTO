@@ -8,6 +8,7 @@ alter table public.class_subjects enable row level security;
 alter table public.lessons enable row level security;
 alter table public.lesson_files enable row level security;
 alter table public.assignments enable row level security;
+alter table public.assignment_files enable row level security;
 alter table public.submissions enable row level security;
 alter table public.submission_reviews enable row level security;
 
@@ -325,6 +326,64 @@ on public.assignments
 for delete
 to authenticated
 using (public.is_teacher_of_class_subject(class_subject_id));
+
+create policy "assignment_files_select_admin"
+on public.assignment_files
+for select
+to authenticated
+using (public.current_user_role() = 'admin');
+
+create policy "assignment_files_select_teacher"
+on public.assignment_files
+for select
+to authenticated
+using (
+  exists (
+    select 1
+    from public.assignments a
+    where a.id = assignment_id
+      and public.is_teacher_of_class_subject(a.class_subject_id)
+  )
+);
+
+create policy "assignment_files_select_student"
+on public.assignment_files
+for select
+to authenticated
+using (
+  exists (
+    select 1
+    from public.assignments a
+    where a.id = assignment_id
+      and public.is_student_in_class_subject(a.class_subject_id)
+  )
+);
+
+create policy "assignment_files_insert_teacher"
+on public.assignment_files
+for insert
+to authenticated
+with check (
+  exists (
+    select 1
+    from public.assignments a
+    where a.id = assignment_id
+      and public.is_teacher_of_class_subject(a.class_subject_id)
+  )
+);
+
+create policy "assignment_files_delete_teacher"
+on public.assignment_files
+for delete
+to authenticated
+using (
+  exists (
+    select 1
+    from public.assignments a
+    where a.id = assignment_id
+      and public.is_teacher_of_class_subject(a.class_subject_id)
+  )
+);
 
 create policy "submissions_select_student_own"
 on public.submissions

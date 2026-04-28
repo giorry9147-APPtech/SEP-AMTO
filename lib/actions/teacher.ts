@@ -97,6 +97,28 @@ export async function createAssignmentAction(formData: FormData) {
     throw new Error(assignmentError?.message || "Opdracht opslaan mislukt.");
   }
 
+  const file = formData.get("file");
+
+  if (file instanceof File && file.size > 0) {
+    const path = `${assignment.id}/${Date.now()}-${file.name}`;
+    const upload = await uploadStorageFile("assignment-files", path, file);
+
+    if (upload.error || !upload.path) {
+      throw new Error(upload.error || "Bestand uploaden mislukt.");
+    }
+
+    const { error: assignmentFileError } = await supabase.from("assignment_files").insert({
+      assignment_id: assignment.id,
+      file_name: file.name,
+      file_path: upload.path,
+      uploaded_by: user.id
+    });
+
+    if (assignmentFileError) {
+      throw new Error(`Bestand koppelen aan opdracht mislukt: ${assignmentFileError.message}`);
+    }
+  }
+
   revalidatePath("/teacher");
   revalidatePath("/teacher/subjects");
   revalidatePath(`/subject/${classSubjectId}`);

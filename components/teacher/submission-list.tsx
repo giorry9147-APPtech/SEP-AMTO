@@ -20,6 +20,16 @@ export function SubmissionList({ submissions, action }: SubmissionListProps) {
                 Ingeleverd op {formatDate(submission.submitted_at)}
               </p>
               {submission.comment ? <p className="mt-2 text-sm text-slate-600">{submission.comment}</p> : null}
+              {submission.file_url ? (
+                <a
+                  href={submission.file_url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-3 inline-flex rounded-2xl bg-slate-100 px-4 py-2 text-sm font-medium text-slate-700"
+                >
+                  Ingeleverd bestand openen
+                </a>
+              ) : null}
             </div>
             <StatusBadge variant={submission.status === "reviewed" ? "success" : "warning"}>
               {submission.status}

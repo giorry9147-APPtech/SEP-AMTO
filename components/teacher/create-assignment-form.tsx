@@ -39,6 +39,15 @@ export function CreateAssignmentForm({ classSubjects, action }: CreateAssignment
         <label className="mb-2 block text-sm font-medium text-slate-700">Deadline</label>
         <input name="due_date" type="datetime-local" className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm" />
       </div>
+      <div>
+        <label className="mb-2 block text-sm font-medium text-slate-700">Bestand</label>
+        <input
+          name="file"
+          type="file"
+          disabled={!hasSubjects}
+          className="w-full rounded-2xl border border-slate-200 px-4 py-3 text-sm disabled:bg-slate-100"
+        />
+      </div>
       {!hasSubjects ? (
         <p className="text-sm text-slate-500">
           Een admin moet eerst een vak aan jouw account koppelen voordat je opdrachten kunt publiceren.

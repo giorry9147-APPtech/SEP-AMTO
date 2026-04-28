@@ -53,9 +53,9 @@ function SubmitButton() {
     <button
       type="submit"
       disabled={pending}
-      className="rounded-2xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 disabled:cursor-not-allowed disabled:opacity-60"
+      className="rounded-2xl bg-brand-500 px-4 py-3 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60"
     >
-      {pending ? "Student koppelen..." : "Student koppelen"}
+      {pending ? "Student koppelen..." : "Student koppelen aan klas"}
     </button>
   );
 }
