@@ -1,5 +1,5 @@
 import { createAdminClient, createClient } from "@/lib/supabase/server";
-import type { AdminListsData, AdminOverview } from "@/types/app";
+import type { AdminListsData, AdminOverview, StudentEnrollmentItem, TeacherRosterItem } from "@/types/app";
 
 function createEmptyAdminOverview(): AdminOverview {
   return {
@@ -117,7 +117,7 @@ export async function getAdminLists(): Promise<AdminListsData> {
       .map((s: any) => ({ id: s.id, full_name: s.full_name, email: s.email }))
   }));
 
-  const teacherMap = new Map<string, import("@/types/app").TeacherRosterItem>();
+  const teacherMap = new Map<string, TeacherRosterItem>();
   for (const row of (classSubjectsResult.data ?? []) as any[]) {
     const teacher = row.teacher;
     if (!teacher) continue;
@@ -152,7 +152,7 @@ export async function getAdminLists(): Promise<AdminListsData> {
         program_code: cr.study_program?.code ?? ""
       };
     })
-    .filter(Boolean) as import("@/types/app").StudentEnrollmentItem[];
+    .filter(Boolean) as StudentEnrollmentItem[];
 
   return {
     classRosters,
