@@ -6,6 +6,57 @@ insert into storage.buckets (id, name, public)
 values ('submission-files', 'submission-files', false)
 on conflict (id) do nothing;
 
+create or replace function public.is_teacher_of_class_subject(cs_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.class_subjects cs
+    where cs.id = cs_id
+      and cs.teacher_id = auth.uid()
+  )
+$$;
+
+create or replace function public.is_student_in_class_subject(cs_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.class_subjects cs
+    join public.class_students cls on cls.class_id = cs.class_id
+    where cs.id = cs_id
+      and cls.student_id = auth.uid()
+  )
+$$;
+
+create or replace function public.is_teacher_of_assignment(a_id uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.assignments a
+    join public.class_subjects cs on cs.id = a.class_subject_id
+    where a.id = a_id
+      and cs.teacher_id = auth.uid()
+  )
+$$;
+
+grant execute on function public.is_teacher_of_class_subject(uuid) to authenticated, anon;
+grant execute on function public.is_student_in_class_subject(uuid) to authenticated, anon;
+grant execute on function public.is_teacher_of_assignment(uuid) to authenticated, anon;
+
 create table if not exists public.assignment_files (
   id uuid primary key default gen_random_uuid(),
   assignment_id uuid not null references public.assignments(id) on delete cascade,
