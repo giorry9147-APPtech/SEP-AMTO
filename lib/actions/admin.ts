@@ -111,6 +111,15 @@ export async function assignStudentToClassAction(
     };
   }
 
+  const forceSwitch = formData.get("force_switch") === "true";
+
+  if (existingAssignments?.length && !forceSwitch) {
+    return {
+      status: "warning",
+      message: "confirm_switch|Deze student zit al in een andere klas."
+    };
+  }
+
   if (existingAssignments?.length) {
     const { error: deleteError } = await supabase.from("class_students").delete().eq("student_id", studentId);
 

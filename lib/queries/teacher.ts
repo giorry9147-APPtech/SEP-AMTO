@@ -59,12 +59,19 @@ export async function getTeacherOverview(profileId?: string): Promise<TeacherOve
     }
 
     const subjects = (subjectsResult.data as TeacherOverview["subjects"]) ?? [];
-    const lessons = ((subjectsResult.data as Array<{ lessons?: any[] }> | null) ?? [])
-      .flatMap((item) => item.lessons ?? [])
-      .map((lesson) => ({
+    const lessonsRaw = ((subjectsResult.data as Array<{ lessons?: any[] }> | null) ?? [])
+      .flatMap((item) => item.lessons ?? []);
+    const lessons = await Promise.all(
+      lessonsRaw.map(async (lesson) => ({
         ...lesson,
-        files: lesson.lesson_files ?? []
-      })) as TeacherOverview["lessons"];
+        files: await Promise.all(
+          (lesson.lesson_files ?? []).map(async (file: any) => ({
+            ...file,
+            download_url: await getStorageObjectUrl("lesson-files", file.file_path)
+          }))
+        )
+      }))
+    ) as TeacherOverview["lessons"];
     const assignments = assignmentsResult.data ?? [];
     const submissions = submissionsResult.data ?? [];
     const assignmentIds = assignments.map((item) => item.id);
