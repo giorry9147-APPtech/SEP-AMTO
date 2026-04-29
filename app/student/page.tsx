@@ -7,7 +7,8 @@ const navLinks = [
   { href: "/student", label: "Kies richting" },
   { href: "/student/portal", label: "Dashboard" },
   { href: "/student/assignments", label: "Opdrachten" },
-  { href: "/student/submissions", label: "Mijn inzendingen" }
+  { href: "/student/submissions", label: "Mijn inzendingen" },
+  { href: "/student/results", label: "Mijn resultaten" }
 ] as const;
 
 export const dynamic = "force-dynamic";

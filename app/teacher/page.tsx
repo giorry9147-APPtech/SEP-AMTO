@@ -9,6 +9,7 @@ import { getTeacherOverview } from "@/lib/queries/teacher";
 const navLinks = [
   { href: "/teacher", label: "Dashboard" },
   { href: "/teacher/subjects", label: "Mijn vakken" },
+  { href: "/teacher/grades", label: "Cijfers" },
   { href: "/teacher/lessons/new", label: "Nieuwe les" },
   { href: "/teacher/assignments/new", label: "Nieuwe opdracht" }
 ] as const;

@@ -54,6 +54,7 @@ export default async function SubjectDetailPage({
     ? [
         { href: "/teacher", label: "Dashboard" },
         { href: "/teacher/subjects", label: "Mijn vakken" },
+        { href: "/teacher/grades", label: "Cijfers" },
         { href: "/teacher/lessons/new", label: "Nieuwe les" },
         { href: "/teacher/assignments/new", label: "Nieuwe opdracht" }
       ]
@@ -61,7 +62,8 @@ export default async function SubjectDetailPage({
         { href: "/student", label: "Kies richting" },
         { href: "/student/portal", label: "Dashboard" },
         { href: "/student/assignments", label: "Opdrachten" },
-        { href: "/student/submissions", label: "Mijn inzendingen" }
+        { href: "/student/submissions", label: "Mijn inzendingen" },
+        { href: "/student/results", label: "Mijn resultaten" }
       ]) as ReadonlyArray<{ href: Route; label: string }>;
 
   return (

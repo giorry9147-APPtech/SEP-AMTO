@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(grep -E \"\\\\.\\(ts|tsx|js\\)$\")",
+      "Bash(grep -E \"\\\\.\\(ts|tsx\\)$\")",
+      "Bash(npx supabase *)",
+      "Bash(node -e ' *)",
+      "Read(//c/Users/31621/.claude/projects/c--Users-31621-Desktop-AMTO-LESPORTAAL/memory/**)",
+      "Bash(npm run *)"
+    ]
+  }
+}

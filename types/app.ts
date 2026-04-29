@@ -3,6 +3,7 @@ import type {
   AssignmentFile,
   ClassRoom,
   ClassSubject,
+  Grade,
   Lesson,
   LessonFile,
   Profile,
@@ -123,4 +124,55 @@ export type AdminListsData = {
   classRosters: ClassRosterItem[];
   teacherRosters: TeacherRosterItem[];
   studentEnrollments: StudentEnrollmentItem[];
+};
+
+export type GradedByMeta = Pick<Profile, "full_name"> & { role: Profile["role"] };
+
+export type GradeStudentMeta = Pick<Profile, "id" | "full_name" | "email">;
+
+export type GradeWithMeta = Grade & {
+  student: GradeStudentMeta | null;
+  graded_by_profile: GradedByMeta | null;
+};
+
+export type ClassSubjectSummary = {
+  id: string;
+  subject_name: string;
+  subject_type: Subject["subject_type"];
+  class_name: string;
+  year_level: number;
+  program_name: string;
+  program_code: string;
+  teacher_id: string;
+  teacher_name: string;
+};
+
+export type GradebookStudent = {
+  id: string;
+  full_name: string;
+  email: string;
+  grades: Grade[];
+  average: number | null;
+};
+
+export type TeacherGradebook = {
+  classSubject: ClassSubjectSummary;
+  students: GradebookStudent[];
+};
+
+export type StudentSubjectResults = {
+  class_subject_id: string;
+  subject_name: string;
+  subject_type: Subject["subject_type"];
+  class_name: string;
+  year_level: number;
+  teacher_name: string;
+  grades: Grade[];
+  average: number | null;
+};
+
+export type AdminGradesData = {
+  classSubjects: ClassSubjectSummary[];
+  selectedClassSubjectId: string | null;
+  selectedGradebook: TeacherGradebook | null;
 };

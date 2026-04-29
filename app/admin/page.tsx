@@ -12,6 +12,7 @@ const navLinks = [
   { href: "/admin/users", label: "Gebruikers" },
   { href: "/admin/programs", label: "Richtingen" },
   { href: "/admin/subjects", label: "Vakken" },
+  { href: "/admin/grades", label: "Cijfers" },
   { href: "/admin/lists", label: "Lijsten" }
 ] as const;
 
@@ -32,9 +33,9 @@ const managementCards = [
     href: "/admin/subjects"
   },
   {
-    title: "Cijfers en uploads",
-    description: "Voorbereide plek voor later: admin kan hier cijfers beheren en bestanden volgen.",
-    href: "/admin/subjects"
+    title: "Cijfers beheren",
+    description: "Voer cijfers in of bewerk ze per klas en vak. Studenten zien wijzigingen direct in hun resultaten.",
+    href: "/admin/grades"
   }
 ] as const;
 
@@ -54,7 +55,7 @@ export default async function AdminPage() {
       profile={profile}
       currentPath="/admin"
       title="Admin dashboard"
-      description="Beheer vanaf hier gebruikers, klassen, vakken en straks ook cijfers en uploads."
+      description="Beheer vanaf hier gebruikers, klassen, vakken en cijfers."
       navTitle="Beheer"
       navSubtitle="Admin portal"
       links={navLinks}

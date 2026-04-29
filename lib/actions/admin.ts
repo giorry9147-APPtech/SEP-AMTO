@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import type { FormActionState } from "@/lib/actions/form-state";
 import { requireRole } from "@/lib/auth/require-role";
 import { getSupabaseConfigError } from "@/lib/env";
+import { parseGradeFormFields } from "@/lib/grades";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
 
 async function getSchoolId(supabase: any) {
@@ -524,4 +525,80 @@ export async function assignSubjectToClassAction(
     status: "success",
     message: "Vak is gekoppeld aan de klas."
   };
+}
+
+export async function adminUpsertGradeAction(
+  _previousState: FormActionState,
+  formData: FormData
+): Promise<FormActionState> {
+  const profile = await requireRole(["admin"]);
+  const adminClient = getRequiredAdminClient();
+  const parsed = parseGradeFormFields(formData);
+
+  if (!parsed.ok) {
+    return { status: "error", message: parsed.error };
+  }
+
+  const { id, payload } = parsed;
+
+  if (id) {
+    const { error } = await adminClient
+      .from("grades")
+      .update({
+        title: payload.title,
+        grade_type: payload.grade_type,
+        score: payload.score,
+        weight: payload.weight,
+        comment: payload.comment
+      })
+      .eq("id", id);
+
+    if (error) {
+      return { status: "error", message: `Cijfer bijwerken mislukt: ${error.message}` };
+    }
+  } else {
+    const { error } = await adminClient.from("grades").insert({
+      class_subject_id: payload.class_subject_id,
+      student_id: payload.student_id,
+      title: payload.title,
+      grade_type: payload.grade_type,
+      score: payload.score,
+      weight: payload.weight,
+      comment: payload.comment,
+      graded_by: profile.id
+    });
+
+    if (error) {
+      return { status: "error", message: `Cijfer opslaan mislukt: ${error.message}` };
+    }
+  }
+
+  revalidatePath("/admin/grades");
+  revalidatePath(`/teacher/grades/${payload.class_subject_id}`);
+  revalidatePath("/student/results");
+
+  return { status: "success", message: id ? "Cijfer is bijgewerkt." : "Cijfer is opgeslagen." };
+}
+
+export async function adminDeleteGradeAction(formData: FormData) {
+  await requireRole(["admin"]);
+  const adminClient = getRequiredAdminClient();
+  const id = String(formData.get("id"));
+  const classSubjectId = String(formData.get("class_subject_id"));
+
+  if (!id) {
+    throw new Error("Cijfer-id ontbreekt.");
+  }
+
+  const { error } = await adminClient.from("grades").delete().eq("id", id);
+
+  if (error) {
+    throw new Error(`Cijfer verwijderen mislukt: ${error.message}`);
+  }
+
+  revalidatePath("/admin/grades");
+  if (classSubjectId) {
+    revalidatePath(`/teacher/grades/${classSubjectId}`);
+  }
+  revalidatePath("/student/results");
 }

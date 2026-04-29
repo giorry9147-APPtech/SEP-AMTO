@@ -107,3 +107,25 @@ export type SubmissionReview = {
   feedback: string | null;
   reviewed_at: string;
 };
+
+export type GradeType =
+  | "toets"
+  | "so"
+  | "opdracht"
+  | "mondeling"
+  | "praktijk"
+  | "examen"
+  | "anders";
+
+export type Grade = {
+  id: string;
+  class_subject_id: string;
+  student_id: string;
+  title: string;
+  grade_type: GradeType;
+  score: number;
+  weight: number;
+  comment: string | null;
+  graded_by: string;
+  graded_at: string;
+};
