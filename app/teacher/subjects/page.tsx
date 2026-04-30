@@ -22,7 +22,7 @@ export default async function TeacherSubjectsPage() {
       profile={profile}
       currentPath="/teacher/subjects"
       title="Mijn vakken"
-      description="Alle class_subjects waarvoor jij verantwoordelijk bent als docent."
+      description="Alle vakken waarvoor jij verantwoordelijk bent als docent."
       navTitle="Docent"
       navSubtitle="Vakoverzicht"
       links={navLinks}

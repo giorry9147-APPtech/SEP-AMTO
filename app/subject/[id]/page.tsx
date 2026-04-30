@@ -82,7 +82,7 @@ export default async function SubjectDetailPage({
           {assignments.length ? (
             <AssignmentList
               assignments={assignments}
-              actionLabel={isTeacher ? "Bekijk submissions" : undefined}
+              actionLabel={isTeacher ? "Bekijk inzendingen" : undefined}
               actionHref={
                 isTeacher
                   ? (assignment) => `/teacher/submissions/${assignment.id}` as Route

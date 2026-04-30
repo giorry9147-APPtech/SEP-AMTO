@@ -46,7 +46,7 @@ export function SubmissionList({ submissions, action }: SubmissionListProps) {
               </select>
               <input name="score" defaultValue={submission.review?.score ?? ""} className="rounded-2xl border border-slate-200 px-4 py-3 text-sm" placeholder="Score" />
               <button type="submit" className="rounded-2xl bg-brand-600 px-4 py-3 text-sm font-semibold text-white">
-                Review opslaan
+                Beoordeling opslaan
               </button>
               <textarea name="feedback" rows={3} defaultValue={submission.review?.feedback ?? ""} className="md:col-span-3 rounded-2xl border border-slate-200 px-4 py-3 text-sm" placeholder="Feedback voor de student" />
             </form>

@@ -24,7 +24,7 @@ export default async function AdminUsersPage() {
       profile={profile}
       currentPath="/admin/users"
       title="Gebruikers"
-      description="Overzicht van admins, docenten en studenten. Voor de MVP worden accounts via Supabase Auth beheerd."
+      description="Overzicht van admins, docenten en studenten."
       navTitle="Beheer"
       navSubtitle="Gebruikers"
       links={navLinks}

@@ -41,7 +41,7 @@ export default async function StudentSubmissionsPage() {
         profile={profile}
         currentPath="/student/submissions"
         title="Mijn inzendingen"
-        description="Kies eerst je richting en leerjaar om je submissions te openen."
+        description="Kies eerst je richting en leerjaar om je inzendingen te openen."
         navTitle="Student"
         navSubtitle="Inzendingen"
         links={navLinks}

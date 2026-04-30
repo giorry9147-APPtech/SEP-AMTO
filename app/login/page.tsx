@@ -68,7 +68,7 @@ export default async function LoginPage() {
               Welkom terug
             </h2>
             <p className="mt-4 max-w-lg text-base leading-8 text-slate-600">
-              {configurationError ?? "Gebruik een account uit Supabase Auth om door te gaan."}
+              {configurationError ?? "Gebruik je accountgegevens om door te gaan."}
             </p>
             <div className="mt-10">
               <LoginForm

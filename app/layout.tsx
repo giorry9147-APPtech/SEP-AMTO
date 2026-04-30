@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "AMTO Lesportaal",
-  description: "Demo lesportaal voor AMTO met Next.js en Supabase."
+  description: "Lesportaal voor AMTO."
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

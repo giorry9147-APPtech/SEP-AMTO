@@ -21,7 +21,7 @@ export default async function AdminNewTeacherPage() {
       profile={profile}
       currentPath="/admin/users"
       title="Docent aanmaken"
-      description="Voeg hier een docentaccount toe zonder dat studentenformulieren ertussen staan."
+      description="Voeg hier een nieuw docentaccount toe."
       navTitle="Beheer"
       navSubtitle="Gebruikers"
       links={navLinks}
@@ -29,7 +29,7 @@ export default async function AdminNewTeacherPage() {
       <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
         <section className="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-panel">
           <p className="text-sm font-semibold uppercase tracking-[0.22em] text-brand-600">
-            Docentflow
+            Docent toevoegen
           </p>
           <h3 className="mt-3 text-xl font-semibold text-slate-950">Alleen voor docentaccounts</h3>
           <p className="mt-3 text-sm leading-7 text-slate-600">

@@ -36,7 +36,7 @@ export default async function TeacherGradebookPage({
       >
         <EmptyState
           title="Vak niet gevonden"
-          description="Dit class_subject hoort niet bij jouw docentaccount."
+          description="Dit vak hoort niet bij jouw docentaccount."
         />
         <Link href="/teacher/grades" className="mt-4 inline-flex text-sm font-medium text-brand-700">
           Terug naar overzicht

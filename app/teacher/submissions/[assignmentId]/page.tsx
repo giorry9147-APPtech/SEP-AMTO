@@ -27,16 +27,16 @@ export default async function TeacherSubmissionsPage({
     <AppShell
       profile={profile}
       currentPath="/teacher"
-      title="Submissions bekijken"
+      title="Inzendingen bekijken"
       description="Bekijk per opdracht welke studenten hebben ingeleverd en geef status of feedback."
       navTitle="Docent"
-      navSubtitle="Review"
+      navSubtitle="Beoordelen"
       links={navLinks}
     >
       {filtered.length ? (
         <SubmissionList submissions={filtered} action={reviewSubmissionAction} />
       ) : (
-        <EmptyState title="Nog geen inzendingen" description="Er zijn nog geen submissions voor deze opdracht." />
+        <EmptyState title="Nog geen inzendingen" description="Er zijn nog geen inzendingen voor deze opdracht." />
       )}
     </AppShell>
   );

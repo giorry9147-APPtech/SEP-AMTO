@@ -23,7 +23,7 @@ export default async function TeacherPage() {
       profile={profile}
       currentPath="/teacher"
       title="Docent dashboard"
-      description="Werk vanuit één plek aan je vakken, lessen, opdrachten en reviewtaken."
+      description="Werk vanuit één plek aan je vakken, lessen, opdrachten en beoordelingen."
       navTitle="Docent"
       navSubtitle="Mijn vakken"
       links={navLinks}
@@ -34,7 +34,7 @@ export default async function TeacherPage() {
         ))}
       </section>
       <section className="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-panel">
-        <h3 className="text-lg font-semibold text-slate-950">Open reviewwerk</h3>
+        <h3 className="text-lg font-semibold text-slate-950">Te beoordelen inzendingen</h3>
         <div className="mt-4 space-y-3">
           {overview.submissions.length ? (
             overview.submissions.map((submission) => (
@@ -44,7 +44,7 @@ export default async function TeacherPage() {
               </div>
             ))
           ) : (
-            <EmptyState title="Geen open submissions" description="Nieuwe inzendingen van studenten verschijnen hier." />
+            <EmptyState title="Geen openstaande inzendingen" description="Nieuwe inzendingen van studenten verschijnen hier." />
           )}
         </div>
       </section>
@@ -53,7 +53,7 @@ export default async function TeacherPage() {
         <div className="mt-4">
           <AssignmentList
             assignments={overview.assignments}
-            actionLabel="Bekijk submissions"
+            actionLabel="Bekijk inzendingen"
             actionHref={(assignment) => `/teacher/submissions/${assignment.id}` as Route}
           />
         </div>

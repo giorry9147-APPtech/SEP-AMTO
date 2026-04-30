@@ -21,7 +21,7 @@ export default async function AdminNewStudentPage() {
       profile={profile}
       currentPath="/admin/users"
       title="Student aanmaken"
-      description="Voeg hier een studentaccount toe in een aparte flow."
+      description="Voeg hier een nieuw studentaccount toe."
       navTitle="Beheer"
       navSubtitle="Gebruikers"
       links={navLinks}
@@ -29,7 +29,7 @@ export default async function AdminNewStudentPage() {
       <div className="grid gap-6 xl:grid-cols-[0.9fr_1.1fr]">
         <section className="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-panel">
           <p className="text-sm font-semibold uppercase tracking-[0.22em] text-brand-600">
-            Studentenflow
+            Student toevoegen
           </p>
           <h3 className="mt-3 text-xl font-semibold text-slate-950">Alleen voor studentaccounts</h3>
           <p className="mt-3 text-sm leading-7 text-slate-600">
